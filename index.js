@@ -78,7 +78,41 @@ const addDept = () => {
 const addRole = () => {
   inquirer
     .prompt([
-      
-    ])
+      {
+        type: 'input',
+        message: 'What is the title of the role you would like to add?',
+        name: 'roleName',
+      },
+      {
+        type: 'input',
+        message: 'To what department should this role be assigned?',
+        name: 'roleDept',
+      },
+      {
+        type: 'input',
+        message: 'What is the salary of this role?',
+        name: 'roleSal',
+      }])
+      .then(res => {
+        const managerID = db.findManagerID(res.roleDept);
+        const addRoleData = {type:'Role',title:res.roleName,department:managerID,salary:res.roleSal}
+        db.addStuff(addRoleData)}
+      )
 }
+
+/*--const addEmployee = () => {
+  inquirer
+  .prompt([
+    {
+      type: 'input',
+      message: 'What is the employees first name?',
+      name: 'empFirstName',
+    },
+    {
+      type: 'input',
+    }
+--*/
+
+
+
 init();

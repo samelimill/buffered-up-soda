@@ -50,8 +50,13 @@ const addStuff = (stuff) => {
         INSERT INTO department (name)
         VALUES ('${stuff.data}')`
     } else if (stuff.type = 'Role'){
-        queryString = `INSERT INTO role (title, salary, department_id)
-        VALUES (${stuff.title},${stuff.salary},${stuff.department})`
+        queryString = `
+        INSERT INTO role (title, salary, department_id)
+        VALUES ('${stuff.title}','${stuff.salary}','${stuff.department}')`
+    } else if (stuff.type = 'Employee'){
+        queryString = `
+        INSERT INTO employee (first_name, last_name, role_id, manager_id)
+        VALUES ()`
     }
     db.query(queryString, (err, res) => {
         if (err){
@@ -62,7 +67,17 @@ const addStuff = (stuff) => {
     });
 }
 
+const findManagerID = (data) => {
+    console.log('hello '+data);
+    var managerID = ''
+    db.query(`SELECT id FROM department WHERE name ='${data}'`, (err,res) => {
+        managerID = res[0].id;
+    })
+    return managerID;
+}
+
 module.exports = {
     viewStuff,
     addStuff,
+    findManagerID,
 };
