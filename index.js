@@ -21,14 +21,15 @@ const init = () => {
         name: 'options',
         choices: [
             'View All Departments',
-            'View All Roles',
-            'View All Employees',
-            new inquirer.Separator(),
             'Add a Department',
-            'Add a Role',
-            'Add an Employee',
             new inquirer.Separator(),
-            'Update an Employee Role'
+            'View All Roles',
+            'Add a Role',
+            new inquirer.Separator(),
+            'View All Employees',
+            'Add an Employee',
+            'Update an Employee Role',
+            new inquirer.Separator(),
         ]
     }]).then(res => {
       switch(res.options) {
