@@ -1,7 +1,7 @@
 const express = require('express');
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-require('dotenv').config();
+// console.table formats tables
 require('console.table');
 // cfonts for ascii logo
 const cfonts = require('cfonts');
@@ -14,18 +14,19 @@ const db = mysql.createConnection(
       database: 'employee_db'
     });
 
-const PORT = process.env.PORT || 3001;
+const PORT = 3001;
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+// Fires at end of js, presents ascii title and launches the routing prompt
 const init = () => {
   cfonts.say('Employee|Manager', {font: 'simple3d'});
   routePrompt();
 };
 
-
+// Presents first inquirer, where user selects what to do
 const routePrompt = () => {
   inquirer
   .prompt([{
@@ -36,38 +37,49 @@ const routePrompt = () => {
           'View All Employees',
           'Add an Employee',
           'Update an Employee Role',
+          'Delete an Employee',
           new inquirer.Separator(),
           'View All Departments',
           'Add a Department',
+          'Delete a Department',
           new inquirer.Separator(),
           'View All Roles',
           'Add a Role',
+          'Delete a Role',
           new inquirer.Separator(),
           'Quit',
           new inquirer.Separator(),
       ]
   }]).then(res => {
+// Switch matches user response with related function
     switch(res.options) {
       case 'View All Departments':
         return viewStuff('department');
       case 'Add a Department':
         return addDept();
+      case 'Delete a Department':
+        return deleteStuff('Department');
       case 'View All Roles':
         return viewStuff('role');
       case 'Add a Role':
         return addRole();
+      case 'Delete a Role':
+        return deleteStuff('Role');
       case 'View All Employees':
         return viewStuff('employee');
       case 'Add an Employee':
         return addEmployee();
       case 'Update an Employee Role':
         return update();
+      case 'Delete an Employee':
+        return deleteStuff('Employee');
       case 'Quit':
         return process.exit() ;
     }
   })
 };
 
+// handles all "view" requests, constructs a string according to what option is selected
 const viewStuff = (location) => {
   var queryString = ``;
   if (location === 'department'){
@@ -91,17 +103,20 @@ const viewStuff = (location) => {
       GROUP BY e1.id
       ORDER BY e1.last_name ASC`;
   }
+// db.query with string provided by if else statment
   db.query(queryString, (err, res) => {
       if (err){
           console.log(err)
       } else {
           console.log('\n');
           console.table(res);
-          routePrompt()
+// routePrompt is launched at the end of everything but the 'Quit' selection
+          routePrompt();
       }
   });
 };
 
+// each "Add" and the "Update" selection gets it's own function as more data needs to be collected via inquirer
 const addDept = () => {
   inquirer
     .prompt([{
@@ -205,6 +220,27 @@ const update = () => {
         console.log(err)
       } else {
         console.log('Employee updated!');
+        routePrompt();
+      }}
+    )
+  })
+};
+
+// Handles all delete requests, data needed is the same for all tables
+const deleteStuff = (data) => {
+  inquirer
+  .prompt([
+    {
+      type: "input",
+      message: `Please enter the Id of the ${data.toLowerCase()} you would like to delete:`,
+      name: "deleteId",
+    }
+  ]).then(res =>{
+    db.query(`DELETE FROM ${data} WHERE id =${res.deleteId};`, (err, res) => {
+      if (err){
+        console.log(err)
+      } else {
+        console.log(`${data} deleted!`);
         routePrompt();
       }}
     )

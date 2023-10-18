@@ -27,9 +27,3 @@ CREATE TABLE employee (
   REFERENCES role(id)
   ON DELETE SET NULL
 );
-
--- WITH RECURSIVE employee AS (
---   employee.id
---   UNION ALL
---   manager_id
--- );
