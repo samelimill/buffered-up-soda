@@ -22,7 +22,7 @@ app.use(express.json());
 
 // Fires at end of js, presents ascii title and launches the routing prompt
 const init = () => {
-  cfonts.say('Employee|Manager', {font: 'simple3d'});
+  cfonts.say('Employee|Manager', {font: 'simple3d', align: 'left'});
   routePrompt();
 };
 
